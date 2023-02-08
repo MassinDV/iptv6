@@ -1,0 +1,61 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the action will run. 
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "1 1 */2 * *"
+  push:
+    branches:
+      - master
+  create:
+    tags:
+      - v*
+  # Triggers the workflow on push or pull request events but only for the main branch
+#  push:
+ #   branches: [ master ]
+#   pull_request:
+#     branches: [ master ]
+
+
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+        with:
+         ref: master
+
+      # Runs a single command using the runners shell
+      - name: Set up JDK 8
+        uses: actions/setup-java@v1
+        with:
+          java-version: '8.0.232' # The JDK version to make available on the path.
+          java-package: jdk # (jre, jdk, or jdk+fx) - defaults to jdk
+          architecture: x64 # (x64 or x86) - defaults to x64
+      
+#       - name: Build with Gradle
+#         uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
+#         with:
+#           arguments: builder:fatJar
+      - run: wget https://raw.githubusercontent.com/stonethe/live/main/iptv.m3u -O iptv.m3u
+      - run: wget https://raw.githubusercontent.com/kozalak-robot/iptv/master/daily.m3u8 -O daily.m3u
+      - run: java -jar lib/iptv.jar
+      - run: git status 
+      - run: git config --local user.email ${{ secrets.email }}
+      - run: git config --local user.name ${{ secrets.username }}
+      - run: git add *.m3u
+      - run: git commit -m "update list"
+      - uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: master
