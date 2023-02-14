@@ -47,7 +47,7 @@ jobs:
 #         uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
 #         with:
 #           arguments: builder:fatJar
-      - run: wget https://raw.githubusercontent.com/stonethe/live/main/iptv.m3u -O iptv.m3u
+      - run: wget https://raw.githubusercontent.com/zzhstone/live/main/iptv.m3u -O iptv.m3u
       - run: wget https://raw.githubusercontent.com/kozalak-robot/iptv/master/daily.m3u8 -O daily.m3u
       - run: java -jar lib/iptv.jar
       - run: git status 
